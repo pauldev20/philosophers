@@ -6,22 +6,40 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/13 17:16:57 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/13 18:02:31 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo
+# Main
 CFLAGS = -Wall -Werror -Wextra -fsanitize=address,undefined
 LDFLAGS =
 INCLUDES =
 CC = cc
-
 OBJDIR = objs
+
+# Mandatory
+NAME = philo
 SRCDIR = .
 SRCFILES = main.c utils.c lib.c checkers.c philo.c
 OBJS = $(addprefix $(OBJDIR)/, $(SRCFILES:.c=.o))
 SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))
 
+# # Bonus
+# BONUS_NAME = philo
+# BONUS_SRCDIR = .
+# BONUS_SRCFILES = 
+# BONUS_OBJS = $(addprefix $(OBJDIR)/, $(BONUS_SRCFILES:.c=.o))
+# BONUS_SRCS = $(addprefix $(SRCDIR)/, $(BONUS_SRCFILES))
+
+# # Bonus
+# $(OBJDIR)/%.o: $(BONUS_SRCDIR)/%.c
+# 	@mkdir -p $(@D)
+# 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+
+# bonus: $(BONUS_OBJS)
+# 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(BONUS_OBJS) -o $(BONUS_NAME)
+
+# Mandatroy
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
@@ -36,9 +54,11 @@ debug:
 
 clean:
 	rm -rf $(OBJS)
+	rm -rf $(BONUS_OBJS)
 
 fclean: clean
 	rm -rf $(NAME)
+	rm -rf $(BONUS_NAME)
 
 re: fclean
 	$(MAKE) all
