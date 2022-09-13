@@ -6,34 +6,11 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 01:55:16 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/13 14:05:33 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	check_death(t_philo *philo, int i)
-{
-	pthread_mutex_lock(&philo->maindata->deadcheck_mutex);
-	if (i)
-		philo->maindata->someonedied = i;
-	pthread_mutex_unlock(&philo->maindata->deadcheck_mutex);
-	return (philo->maindata->someonedied);
-}
-
-int	check_must_eat(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	if (philo->nb_ate == philo->maindata->must_eat_count)
-	{
-		philo->finished = 1;
-		philo->maindata->philos_finished++;
-		if (philo->maindata->philos_finished == philo->maindata->amount)
-			check_death(philo, 2);
-	}
-	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
-	return (philo->nb_ate == philo->maindata->must_eat_count);
-}
 
 void	*isdead_routine(void *data)
 {
@@ -43,7 +20,8 @@ void	*isdead_routine(void *data)
 	timesleep(philo->maindata->time_to_die + 1);
 	pthread_mutex_lock(&(philo->eating));
 	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	if (((gettimems() - philo->last_eat) >= (long)(philo->maindata->time_to_die)) && !philo->finished && !check_death(philo, 0))
+	if (!philo->finished && !check_death(philo, 0) && ((gettimems()
+				- philo->last_eat) >= (long)(philo->maindata->time_to_die)))
 	{
 		write_thread_msg("died", philo);
 		check_death(philo, 1);
@@ -53,7 +31,7 @@ void	*isdead_routine(void *data)
 	return (NULL);
 }
 
-void    *philo_routine(void *data)
+void	*philo_routine(void *data)
 {
 	t_philo	*philo;
 
@@ -80,29 +58,8 @@ void    *philo_routine(void *data)
 		pthread_detach(philo->death_thread);
 		philo->nb_ate++;
 		check_must_eat(philo);
-
 	}
 	return (NULL);
-}
-
-int	check_args(int argc, char **argv)
-{
-	int		i;
-	int		j;
-
-	i = 1;
-	while (i++ < argc)
-	{
-		j = 0;
-		while (argv[i - 1][j])
-		{
-			if (argv[i - 1][j] < '0' || argv[i - 1][j] > '9' || ft_strlen(argv[i - 1]) > 10)
-				return (0);
-			j++;
-		}
-		i++;
-	}
-	return (1);
 }
 
 int	init(t_main *maindata, int argc, char **argv)
@@ -129,7 +86,8 @@ int	init(t_main *maindata, int argc, char **argv)
 	maindata->philos = (t_philo *)malloc(sizeof(t_philo) * maindata->amount);
 	if (!maindata->philos)
 		return (errorexit("failed allocating storage", maindata));
-	maindata->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * maindata->amount);
+	maindata->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+			* maindata->amount);
 	if (!maindata->forks)
 		return (errorexit("failed allocating storage", maindata));
 	maindata->starttime = gettimems();
@@ -156,27 +114,30 @@ int	init(t_main *maindata, int argc, char **argv)
 	return (0);
 }
 
-void start_threads(t_main *maindata)
+int	start_threads(t_main *maindata)
 {
 	int	i;
 
 	i = 0;
 	while (i++ < maindata->amount)
-		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine, &maindata->philos[i - 1]) != 0)
-			errorexit("failed creating thread", maindata);
+		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine,
+				&maindata->philos[i - 1]) != 0)
+			return (errorexit("failed creating thread", maindata));
 	i = 0;
 	while (i < maindata->amount)
 		pthread_join(maindata->philos[i++].thread, NULL);
 }
 
-int main(int argc, char **argv) {
-	t_main maindata;
+int	main(int argc, char **argv)
+{
+	t_main	maindata;
 
 	if (argc < 5 || argc > 6)
 		return (errorexit("invalid arguments", NULL));
 	if (init(&maindata, argc, argv) != 0)
 		return (1);
-	start_threads(&maindata);
+	if (start_threads(&maindata))
+		return (1);
 	cleanup(&maindata);
 	return (0);
 }

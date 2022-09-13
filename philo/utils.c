@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 19:01:38 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/12 19:05:29 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/13 14:00:46 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,21 @@ int	ft_atoi(const char *str)
 	if (neg)
 		out = out * -1;
 	return ((int)out);
+}
+
+int	errorexit(char *str, t_main *maindata)
+{
+	ft_putstr_fd("Error: ", 2);
+	ft_putstr_fd(str, 2);
+	write(2, "\n", 1);
+	cleanup(maindata);
+	return (1);
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	if (!s)
+		return ;
+	while (*s)
+		write(fd, s++, 1);
 }

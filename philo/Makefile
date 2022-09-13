@@ -6,19 +6,28 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/13 13:41:32 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/13 14:00:04 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
-CFLAGS = -Wall -Werror -Wextra
-CC = gcc
+CFLAGS = -Wall -Werror -Wextra -fsanitize=address,undefined
+LDFLAGS =
+INCLUDES =
+CC = cc
 
-SRCS = main.c utils.c lib.c
-OBJS = $(SRCS:.c=.o)
+OBJDIR = obj
+SRCDIR = .
+SRCFILES = main.c utils.c lib.c
+OBJS = $(addprefix $(OBJDIR)/, $(SRCFILES:.c=.o))
+SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -L. $(OBJS) -o $(NAME) -fsanitize=address,undefined
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJS) -o $(NAME)
 	
 all: $(NAME)
 

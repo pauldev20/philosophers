@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 13:42:26 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/13 14:00:43 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,4 @@ long	gettimems(void)
 	milliseconds = time.tv_sec * 1000;
 	milliseconds += time.tv_usec / 1000;
 	return (milliseconds);
-}
-
-int	errorexit(char *str, t_main *maindata)
-{
-	ft_putstr_fd("Error: ", 2);
-	ft_putstr_fd(str, 2);
-	write(2, "\n", 1);
-	cleanup(maindata);
-	return (1);
-}
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	if (!s)
-		return ;
-	while (*s)
-		write(fd, s++, 1);
 }
