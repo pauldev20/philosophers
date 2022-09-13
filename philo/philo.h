@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:57:25 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 13:42:09 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/13 17:07:49 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,23 @@ typedef struct s_main {
 	int					philos_finished;
 }	t_main;
 
-void	ft_putstr_fd(char *s, int fd);
+// checkers
+int		check_death(t_philo *philo, int i);
+int		check_must_eat(t_philo *philo);
+int		check_args(int argc, char **argv);
+
+// lib
 int		errorexit(char *str, t_main *maindata);
-long	gettimems(void);
-int		ft_atoi(const char *str);
+void	cleanup(t_main *maindata);
 void	timesleep(long milliseconds);
 void	write_thread_msg(char *str, t_philo *philo);
-void	cleanup(t_main *maindata);
-size_t	ft_strlen(const char *str);
+long	gettimems(void);
 
-int		check_death(t_philo *philo, int i);
+// philo
+void	*philo_routine(void *data);
+
+// utils
+int		ft_atoi(const char *str);
+size_t	ft_strlen(const char *str);
 
 #endif

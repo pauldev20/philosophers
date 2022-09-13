@@ -6,7 +6,7 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/13 14:00:04 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/13 17:16:57 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ LDFLAGS =
 INCLUDES =
 CC = cc
 
-OBJDIR = obj
+OBJDIR = objs
 SRCDIR = .
-SRCFILES = main.c utils.c lib.c
+SRCFILES = main.c utils.c lib.c checkers.c philo.c
 OBJS = $(addprefix $(OBJDIR)/, $(SRCFILES:.c=.o))
 SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))
 

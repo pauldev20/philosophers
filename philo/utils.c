@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 19:01:38 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 14:00:46 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/13 17:06:08 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,12 @@ int	ft_atoi(const char *str)
 	return ((int)out);
 }
 
-int	errorexit(char *str, t_main *maindata)
+size_t	ft_strlen(const char *str)
 {
-	ft_putstr_fd("Error: ", 2);
-	ft_putstr_fd(str, 2);
-	write(2, "\n", 1);
-	cleanup(maindata);
-	return (1);
-}
+	size_t	len;
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	if (!s)
-		return ;
-	while (*s)
-		write(fd, s++, 1);
+	len = 0;
+	while (str[len])
+		len++;
+	return (len);
 }
