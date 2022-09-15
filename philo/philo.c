@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 17:03:12 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/15 19:31:49 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/15 19:37:43 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ void	check_dead(t_philo *philo)
 
 	// pthread_mutex_lock(&(philo->eating));
 	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
+	time = gettimems() - philo->maindata->starttime;
 	if (!philo->finished && !check_death(philo->maindata, 0) && ((gettimems()
 				- philo->last_eat) >= (long)(philo->maindata->time_to_die)))
 	{
-		time = gettimems() - philo->maindata->starttime;
 		check_death(philo->maindata, 1);
 		pthread_mutex_lock(&(philo->maindata->write_mutex));
 		printf("%ld %d died\n", time, philo->id);
