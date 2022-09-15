@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 17:16:44 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/15 18:29:38 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	init_philo(t_main *maindata, int nb)
 
 static int	init_main(t_main *maindata)
 {
+	maindata->start = 0;
 	maindata->someonedied = 0;
 	maindata->philos_finished = 0;
 	pthread_mutex_init(&maindata->write_mutex, NULL);
@@ -45,7 +46,6 @@ static int	init_main(t_main *maindata)
 			* maindata->amount);
 	if (!maindata->forks)
 		return (errorexit("failed allocating storage", maindata));
-	maindata->starttime = gettimems();
 	return (0);
 }
 
@@ -68,6 +68,7 @@ int	init(t_main *maindata, int argc, char **argv)
 	i = init_main(maindata);
 	if (i != 0)
 		return (i);
+	maindata->starttime = gettimems();
 	i = 0;
 	while (i < maindata->amount)
 		init_philo(maindata, i++);
@@ -79,13 +80,30 @@ int	start_threads(t_main *maindata)
 	int	i;
 
 	i = 0;
-	while (i++ < maindata->amount)
+	while (i++ < maindata->amount) {
 		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine,
 				&maindata->philos[i - 1]) != 0)
 			return (errorexit("failed creating thread", maindata));
+		usleep(50);
+	}
+	maindata->starttime = gettimems();
 	i = 0;
-	while (i++ < maindata->amount)
-		pthread_join(maindata->philos[i - 1].thread, NULL);
+	while (i < maindata->amount)
+		maindata->philos[i++].last_eat = maindata->starttime;
+	maindata->start = 1;
+	usleep(100);
+	i = 0;
+	// while (!maindata->someonedied)
+	// {
+	// 	check_dead(&maindata->philos[i++]);
+	// 	if (i == maindata->amount)
+	// 		i = 0;
+	// 	usleep(50);
+	// }
+	while (1)
+	{
+		
+	}
 	return (0);
 }
 

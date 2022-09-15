@@ -6,12 +6,12 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/13 18:02:31 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/15 16:38:06 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Main
-CFLAGS = -Wall -Werror -Wextra -fsanitize=address,undefined
+CFLAGS = -Wall -Werror -Wextra #-fsanitize=address,undefined
 LDFLAGS =
 INCLUDES =
 CC = cc
@@ -39,7 +39,7 @@ SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))
 # bonus: $(BONUS_OBJS)
 # 	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(BONUS_OBJS) -o $(BONUS_NAME)
 
-# Mandatroy
+# Mandatory
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<

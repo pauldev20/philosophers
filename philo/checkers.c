@@ -6,19 +6,19 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 14:02:48 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 14:03:14 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/15 18:13:26 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	check_death(t_philo *philo, int i)
+int	check_death(t_main *maindata, int i)
 {
-	pthread_mutex_lock(&philo->maindata->deadcheck_mutex);
+	pthread_mutex_lock(&maindata->deadcheck_mutex);
 	if (i)
-		philo->maindata->someonedied = i;
-	pthread_mutex_unlock(&philo->maindata->deadcheck_mutex);
-	return (philo->maindata->someonedied);
+		maindata->someonedied = i;
+	pthread_mutex_unlock(&maindata->deadcheck_mutex);
+	return (maindata->someonedied);
 }
 
 int	check_must_eat(t_philo *philo)
@@ -29,7 +29,7 @@ int	check_must_eat(t_philo *philo)
 		philo->finished = 1;
 		philo->maindata->philos_finished++;
 		if (philo->maindata->philos_finished == philo->maindata->amount)
-			check_death(philo, 2);
+			check_death(philo->maindata, 2);
 	}
 	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
 	return (philo->nb_ate == philo->maindata->must_eat_count);

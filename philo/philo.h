@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:57:25 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/13 17:07:49 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/15 18:10:42 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,11 @@ typedef struct s_main {
 	pthread_mutex_t		*forks;
 	int					someonedied;
 	int					philos_finished;
+	int					start;
 }	t_main;
 
 // checkers
-int		check_death(t_philo *philo, int i);
+int		check_death(t_main *maindata, int i);
 int		check_must_eat(t_philo *philo);
 int		check_args(int argc, char **argv);
 
@@ -62,6 +63,7 @@ long	gettimems(void);
 
 // philo
 void	*philo_routine(void *data);
+void	check_dead(t_philo *philo);
 
 // utils
 int		ft_atoi(const char *str);
