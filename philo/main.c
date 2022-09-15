@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/15 18:29:38 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/15 19:30:56 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	init(t_main *maindata, int argc, char **argv)
 	i = init_main(maindata);
 	if (i != 0)
 		return (i);
-	maindata->starttime = gettimems();
 	i = 0;
 	while (i < maindata->amount)
 		init_philo(maindata, i++);
@@ -91,18 +90,13 @@ int	start_threads(t_main *maindata)
 	while (i < maindata->amount)
 		maindata->philos[i++].last_eat = maindata->starttime;
 	maindata->start = 1;
-	usleep(100);
 	i = 0;
-	// while (!maindata->someonedied)
-	// {
-	// 	check_dead(&maindata->philos[i++]);
-	// 	if (i == maindata->amount)
-	// 		i = 0;
-	// 	usleep(50);
-	// }
-	while (1)
+	while (!maindata->someonedied)
 	{
-		
+		check_dead(&maindata->philos[i++]);
+		if (i == maindata->amount)
+			i = 0;
+		usleep(50);
 	}
 	return (0);
 }
