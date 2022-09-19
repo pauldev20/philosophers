@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/15 19:38:16 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/20 01:43:05 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,33 @@ int	errorexit(char *str, t_main *maindata)
 
 void	cleanup(t_main *maindata)
 {
-	if (maindata && maindata->philos)
+	int	i;
+
+	i = 0;
+	if (!maindata)
+		return ;
+	pthread_mutex_unlock(&maindata->write_mutex);
+	pthread_mutex_destroy(&maindata->write_mutex);
+	pthread_mutex_unlock(&maindata->deadcheck_mutex);
+	pthread_mutex_destroy(&maindata->deadcheck_mutex);
+	pthread_mutex_unlock(&maindata->finishcheck_mutex);
+	pthread_mutex_destroy(&maindata->finishcheck_mutex);
+	while (i++ < maindata->amount)
+	{
+		if (maindata->forks)
+		{
+			pthread_mutex_unlock(&maindata->forks[i - 1]);
+			pthread_mutex_destroy(&maindata->forks[i - 1]);
+		}
+		if (maindata->philos) 
+		{
+			pthread_mutex_unlock(&maindata->philos[i - 1].eating);
+			pthread_mutex_destroy(&maindata->philos[i - 1].eating);
+		}
+	}
+	if (maindata->philos)
 		free(maindata->philos);
-	if (maindata && maindata->forks)
+	if (maindata->forks)
 		free(maindata->forks);
 }
 
@@ -33,8 +57,8 @@ void	timesleep(long milliseconds)
 {
 	long	start;
 
-	start = gettimems();
-	while ((gettimems() - start) < milliseconds)
+	start = timenow();
+	while ((timenow() - start) < milliseconds)
 		usleep(milliseconds / 10);
 }
 
@@ -43,14 +67,14 @@ void	write_thread_msg(char *str, t_philo *philo)
 	long	time;
 
 	pthread_mutex_lock(&(philo->maindata->write_mutex));
-	time = gettimems() - philo->maindata->starttime;
+	time = timenow() - philo->maindata->starttime;
 	if (!(time >= 0 && time <= 2147483647 && !check_death(philo->maindata, 0)))
 		return ;
 	printf("%ld %d %s\n", time, philo->id, str);
 	pthread_mutex_unlock(&(philo->maindata->write_mutex));
 }
 
-long	gettimems(void)
+long	timenow(void)
 {
 	struct timeval	time;
 	long			milliseconds;

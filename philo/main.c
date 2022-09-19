@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/15 19:30:56 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/19 14:26:01 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,8 @@ int	start_threads(t_main *maindata)
 		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine,
 				&maindata->philos[i - 1]) != 0)
 			return (errorexit("failed creating thread", maindata));
-		usleep(50);
 	}
-	maindata->starttime = gettimems();
+	maindata->starttime = timenow();
 	i = 0;
 	while (i < maindata->amount)
 		maindata->philos[i++].last_eat = maindata->starttime;
@@ -96,7 +95,7 @@ int	start_threads(t_main *maindata)
 		check_dead(&maindata->philos[i++]);
 		if (i == maindata->amount)
 			i = 0;
-		usleep(50);
+		usleep(25);
 	}
 	return (0);
 }

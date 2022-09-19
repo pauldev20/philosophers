@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 17:03:12 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/15 19:37:43 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/19 18:07:03 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ void	check_dead(t_philo *philo)
 {
 	long	time;
 
-	// pthread_mutex_lock(&(philo->eating));
+	pthread_mutex_lock(&(philo->eating));
 	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	time = gettimems() - philo->maindata->starttime;
-	if (!philo->finished && !check_death(philo->maindata, 0) && ((gettimems()
+	time = timenow() - philo->maindata->starttime;
+	if (!philo->finished && !check_death(philo->maindata, 0) && ((timenow()
 				- philo->last_eat) >= (long)(philo->maindata->time_to_die)))
 	{
 		check_death(philo->maindata, 1);
@@ -27,7 +27,7 @@ void	check_dead(t_philo *philo)
 		printf("%ld %d died\n", time, philo->id);
 		pthread_mutex_unlock(&(philo->maindata->write_mutex));
 	}
-	// pthread_mutex_unlock(&(philo->eating));
+	pthread_mutex_unlock(&(philo->eating));
 	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
 }
 
@@ -42,9 +42,9 @@ static void	philo_actions(t_philo *philo)
 	pthread_mutex_lock(&(philo->maindata->forks[philo->right_fork]));
 	write_thread_msg("has taken a fork", philo);
 	write_thread_msg("is eating", philo);
-	// pthread_mutex_lock(&(philo->eating));
-	philo->last_eat = gettimems();
-	// pthread_mutex_unlock(&(philo->eating));
+	pthread_mutex_lock(&(philo->eating));
+	philo->last_eat = timenow();
+	pthread_mutex_unlock(&(philo->eating));
 	timesleep(philo->maindata->time_to_eat);
 	pthread_mutex_unlock(&(philo->maindata->forks[philo->left_fork]));
 	pthread_mutex_unlock(&(philo->maindata->forks[philo->right_fork]));
@@ -62,7 +62,7 @@ void	*philo_routine(void *data)
 		usleep(20);
 	if (!(philo->id % 2))
 		timesleep(philo->maindata->time_to_eat / 10);
-	while (!check_death(philo->maindata, 0))
+	while (!check_death(philo->maindata, 0) && !philo->finished)
 	{
 		philo_actions(philo);
 		philo->nb_ate++;
