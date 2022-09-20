@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:57:25 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/19 14:25:50 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 00:48:51 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct s_main {
 	pthread_mutex_t		write_mutex;
 	pthread_mutex_t		deadcheck_mutex;
 	pthread_mutex_t		finishcheck_mutex;
-	struct s_philo		*philos;
+	t_philo				*philos;
 	pthread_mutex_t		*forks;
 	int					someonedied;
 	int					philos_finished;
@@ -63,7 +63,7 @@ long	timenow(void);
 
 // philo
 void	*philo_routine(void *data);
-void	check_dead(t_philo *philo);
+void	check_dead(t_main *main);
 
 // utils
 int		ft_atoi(const char *str);

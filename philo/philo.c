@@ -6,30 +6,11 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 17:03:12 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/20 20:57:20 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 00:49:03 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	check_dead(t_philo *philo)
-{
-	long	time;
-
-	pthread_mutex_lock(&(philo->eating));
-	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	time = timenow() - philo->maindata->starttime;
-	if (!philo->finished && !check_death(philo->maindata, 0) && ((timenow()
-				- philo->last_eat) >= (long)(philo->maindata->time_to_die)))
-	{
-		check_death(philo->maindata, 1);
-		pthread_mutex_lock(&(philo->maindata->write_mutex));
-		printf("%ld %d died\n", time, philo->id);
-		pthread_mutex_unlock(&(philo->maindata->write_mutex));
-	}
-	pthread_mutex_unlock(&(philo->eating));
-	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
-}
 
 static void	philo_actions(t_philo *philo)
 {
@@ -70,4 +51,32 @@ void	*philo_routine(void *data)
 			return (NULL);
 	}
 	return (NULL);
+}
+
+void	check_dead(t_main *main)
+{
+	int		i;
+	t_philo	*philo;
+
+	i = 0;
+	while (!main->someonedied)
+	{
+		philo = &main->philos[i++];
+		pthread_mutex_lock(&(philo->eating));
+		pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
+		if (!philo->finished && !check_death(philo->maindata, 0) && ((timenow()
+					- philo->last_eat) >= (long)(philo->maindata->time_to_die)))
+		{
+			check_death(philo->maindata, 1);
+			pthread_mutex_lock(&(philo->maindata->write_mutex));
+			printf("%ld %d died\n", timenow()
+				- philo->maindata->starttime, philo->id);
+			pthread_mutex_unlock(&(philo->maindata->write_mutex));
+		}
+		pthread_mutex_unlock(&(philo->eating));
+		pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
+		if (i == main->amount)
+			i = 0;
+		usleep(25);
+	}
 }

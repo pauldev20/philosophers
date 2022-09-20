@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 14:02:48 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/19 18:05:45 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 00:38:44 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ int	check_args(int argc, char **argv)
 	int		j;
 
 	i = 1;
-	while (i++ < argc)
+	while (i < argc)
 	{
 		j = 0;
-		while (argv[i - 1][j])
+		while (argv[i][j])
 		{
-			if (argv[i - 1][j] < '0' || argv[i - 1][j] > '9' ||
-				ft_strlen(argv[i - 1]) > 10)
+			if (argv[i][j] < '0' || argv[i][j] > '9' ||
+				ft_strlen(argv[i]) > 10)
 				return (0);
 			j++;
 		}

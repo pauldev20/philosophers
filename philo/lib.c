@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/20 21:04:40 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 00:52:06 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,49 +28,22 @@ void	cleanup(t_main *maindata)
 	i = 0;
 	if (!maindata)
 		return ;
-	pthread_mutex_unlock(&maindata->write_mutex);
+	if (!maindata->philos)
+		return ;
 	pthread_mutex_destroy(&maindata->write_mutex);
-	pthread_mutex_unlock(&maindata->deadcheck_mutex);
 	pthread_mutex_destroy(&maindata->deadcheck_mutex);
-	pthread_mutex_unlock(&maindata->finishcheck_mutex);
 	pthread_mutex_destroy(&maindata->finishcheck_mutex);
 	while (i++ < maindata->amount)
 	{
 		if (maindata->forks)
-		{
-			pthread_mutex_unlock(&maindata->forks[i - 1]);
 			pthread_mutex_destroy(&maindata->forks[i - 1]);
-		}
-		if (maindata->philos) 
-		{
-			pthread_mutex_unlock(&maindata->philos[i - 1].eating);
+		if (maindata->philos)
 			pthread_mutex_destroy(&maindata->philos[i - 1].eating);
-		}
 	}
 	if (maindata->philos)
 		free(maindata->philos);
 	if (maindata->forks)
 		free(maindata->forks);
-}
-
-void	timesleep(long milliseconds)
-{
-	long	start;
-
-	start = timenow();
-	while ((timenow() - start) < milliseconds)
-		usleep(milliseconds / 10);
-}
-
-void	write_thread_msg(char *str, t_philo *philo)
-{
-	long	time;
-
-	pthread_mutex_lock(&(philo->maindata->write_mutex));
-	time = timenow() - philo->maindata->starttime;
-	if (!check_death(philo->maindata, 0))
-		printf("%ld %d %s\n", time, philo->id, str);
-	pthread_mutex_unlock(&(philo->maindata->write_mutex));
 }
 
 long	timenow(void)
@@ -82,4 +55,22 @@ long	timenow(void)
 	milliseconds = time.tv_sec * 1000;
 	milliseconds += time.tv_usec / 1000;
 	return (milliseconds);
+}
+
+void	timesleep(long milliseconds)
+{
+	long	start;
+
+	start = timenow();
+	while ((timenow() - start) < milliseconds)
+		usleep(milliseconds / 4);
+}
+
+void	write_thread_msg(char *str, t_philo *philo)
+{
+	pthread_mutex_lock(&(philo->maindata->write_mutex));
+	if (!check_death(philo->maindata, 0))
+		printf("%ld %d %s\n", timenow()
+			- philo->maindata->starttime, philo->id, str);
+	pthread_mutex_unlock(&(philo->maindata->write_mutex));
 }

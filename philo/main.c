@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/20 21:05:40 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 00:49:21 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ int	init(t_main *maindata, int argc, char **argv)
 		maindata->must_eat_count = ft_atoi(argv[5]);
 	else
 		maindata->must_eat_count = 0;
+	if (maindata->amount < 1 || maindata->time_to_die < 0
+		|| maindata->time_to_eat < 0 || maindata-> time_to_sleep < 0)
+		return (errorexit("invalid arguments", maindata));
 	i = init_main(maindata);
 	if (i != 0)
 		return (i);
@@ -90,14 +93,7 @@ int	start_threads(t_main *maindata)
 	while (i < maindata->amount)
 		maindata->philos[i++].last_eat = maindata->starttime;
 	maindata->start = 1;
-	i = 0;
-	while (!maindata->someonedied)
-	{
-		check_dead(&maindata->philos[i++]);
-		if (i == maindata->amount)
-			i = 0;
-		usleep(25);
-	}
+	check_dead(maindata);
 	return (0);
 }
 
@@ -116,6 +112,6 @@ int	main(int argc, char **argv)
 	while (i < maindata.amount)
 		pthread_join(maindata.philos[i++].thread, NULL);
 	cleanup(&maindata);
-	usleep(100000);
+	usleep(1000000);
 	return (0);
 }
