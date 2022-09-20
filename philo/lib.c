@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/20 01:43:05 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/20 21:04:40 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,8 @@ void	write_thread_msg(char *str, t_philo *philo)
 
 	pthread_mutex_lock(&(philo->maindata->write_mutex));
 	time = timenow() - philo->maindata->starttime;
-	if (!(time >= 0 && time <= 2147483647 && !check_death(philo->maindata, 0)))
-		return ;
-	printf("%ld %d %s\n", time, philo->id, str);
+	if (!check_death(philo->maindata, 0))
+		printf("%ld %d %s\n", time, philo->id, str);
 	pthread_mutex_unlock(&(philo->maindata->write_mutex));
 }
 

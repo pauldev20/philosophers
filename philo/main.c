@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/20 01:49:50 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/20 21:05:40 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ int	start_threads(t_main *maindata)
 	int	i;
 
 	i = 0;
-	while (i++ < maindata->amount) {
+	while (i++ < maindata->amount)
+	{
 		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine,
 				&maindata->philos[i - 1]) != 0)
 			return (errorexit("failed creating thread", maindata));
@@ -102,6 +103,7 @@ int	start_threads(t_main *maindata)
 
 int	main(int argc, char **argv)
 {
+	int		i;
 	t_main	maindata;
 
 	if (argc < 5 || argc > 6)
@@ -110,6 +112,10 @@ int	main(int argc, char **argv)
 		return (1);
 	if (start_threads(&maindata))
 		return (1);
+	i = 0;
+	while (i < maindata.amount)
+		pthread_join(maindata.philos[i++].thread, NULL);
 	cleanup(&maindata);
+	usleep(100000);
 	return (0);
 }
