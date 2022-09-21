@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 00:52:06 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 14:21:01 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,22 @@ void	cleanup(t_main *maindata)
 		return ;
 	if (!maindata->philos)
 		return ;
+	i = 0;
+	while (i < maindata->amount)
+		pthread_join(maindata->philos[i++].thread, NULL);
 	pthread_mutex_destroy(&maindata->write_mutex);
 	pthread_mutex_destroy(&maindata->deadcheck_mutex);
 	pthread_mutex_destroy(&maindata->finishcheck_mutex);
+	if (maindata->philos)
+		free(maindata->philos);
+	if (!maindata->forks)
+		return ;
 	while (i++ < maindata->amount)
 	{
 		if (maindata->forks)
 			pthread_mutex_destroy(&maindata->forks[i - 1]);
-		if (maindata->philos)
-			pthread_mutex_destroy(&maindata->philos[i - 1].eating);
 	}
-	if (maindata->philos)
-		free(maindata->philos);
-	if (maindata->forks)
-		free(maindata->forks);
+	free(maindata->forks);
 }
 
 long	timenow(void)
@@ -63,7 +65,7 @@ void	timesleep(long milliseconds)
 
 	start = timenow();
 	while ((timenow() - start) < milliseconds)
-		usleep(milliseconds / 4);
+		usleep(200);
 }
 
 void	write_thread_msg(char *str, t_philo *philo)

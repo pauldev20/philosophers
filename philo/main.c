@@ -6,20 +6,18 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 00:49:21 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 14:20:15 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	init_philo(t_main *maindata, int nb)
+static int	init_philo(t_main *maindata, int nb)
 {
 	maindata->philos[nb].nb_ate = 0;
 	maindata->philos[nb].id = nb + 1;
 	maindata->philos[nb].finished = 0;
 	maindata->philos[nb].maindata = maindata;
-	maindata->philos[nb].last_eat = maindata->starttime;
-	pthread_mutex_init(&maindata->philos[nb].eating, NULL);
 	if (nb == 0)
 		maindata->philos[nb].left_fork = 0;
 	else
@@ -28,17 +26,21 @@ static void	init_philo(t_main *maindata, int nb)
 		maindata->philos[nb].right_fork = 0;
 	else
 		maindata->philos[nb].right_fork = nb + 1;
-	pthread_mutex_init(&maindata->forks[nb], NULL);
+	if (pthread_mutex_init(&maindata->forks[nb], NULL))
+		return (errorexit("failed initializing mutex", maindata));
+	return (0);
 }
 
 static int	init_main(t_main *maindata)
 {
-	maindata->start = 0;
 	maindata->someonedied = 0;
 	maindata->philos_finished = 0;
-	pthread_mutex_init(&maindata->write_mutex, NULL);
-	pthread_mutex_init(&maindata->deadcheck_mutex, NULL);
-	pthread_mutex_init(&maindata->finishcheck_mutex, NULL);
+	if (pthread_mutex_init(&maindata->write_mutex, NULL))
+		return (errorexit("failed initializing mutex", maindata));
+	if (pthread_mutex_init(&maindata->deadcheck_mutex, NULL))
+		return (errorexit("failed initializing mutex", maindata));
+	if (pthread_mutex_init(&maindata->finishcheck_mutex, NULL))
+		return (errorexit("failed initializing mutex", maindata));
 	maindata->philos = (t_philo *)malloc(sizeof(t_philo) * maindata->amount);
 	if (!maindata->philos)
 		return (errorexit("failed allocating storage", maindata));
@@ -64,16 +66,16 @@ int	init(t_main *maindata, int argc, char **argv)
 	if (argc == 6)
 		maindata->must_eat_count = ft_atoi(argv[5]);
 	else
-		maindata->must_eat_count = 0;
+		maindata->must_eat_count = -1;
 	if (maindata->amount < 1 || maindata->time_to_die < 0
-		|| maindata->time_to_eat < 0 || maindata-> time_to_sleep < 0)
+		|| maindata->time_to_eat < 0 || maindata->time_to_sleep < 0)
 		return (errorexit("invalid arguments", maindata));
-	i = init_main(maindata);
-	if (i != 0)
-		return (i);
+	if (init_main(maindata))
+		return (1);
 	i = 0;
 	while (i < maindata->amount)
-		init_philo(maindata, i++);
+		if (init_philo(maindata, i++))
+			return (1);
 	return (0);
 }
 
@@ -82,17 +84,17 @@ int	start_threads(t_main *maindata)
 	int	i;
 
 	i = 0;
+	maindata->starttime = timenow();
+	while (i < maindata->amount)
+		maindata->philos[i++].death_time = maindata->starttime
+			+ maindata->time_to_die;
+	i = 0;
 	while (i++ < maindata->amount)
 	{
 		if (pthread_create(&maindata->philos[i - 1].thread, NULL, philo_routine,
 				&maindata->philos[i - 1]) != 0)
 			return (errorexit("failed creating thread", maindata));
 	}
-	maindata->starttime = timenow();
-	i = 0;
-	while (i < maindata->amount)
-		maindata->philos[i++].last_eat = maindata->starttime;
-	maindata->start = 1;
 	check_dead(maindata);
 	return (0);
 }
@@ -104,14 +106,10 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 		return (errorexit("invalid arguments", NULL));
-	if (init(&maindata, argc, argv) != 0)
+	if (init(&maindata, argc, argv))
 		return (1);
 	if (start_threads(&maindata))
 		return (1);
-	i = 0;
-	while (i < maindata.amount)
-		pthread_join(maindata.philos[i++].thread, NULL);
 	cleanup(&maindata);
-	usleep(1000000);
 	return (0);
 }

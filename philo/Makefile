@@ -6,12 +6,12 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/21 00:56:11 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/21 13:58:52 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Main
-CFLAGS = -Wall -Werror -Wextra -pthread #-fsanitize=address,undefined
+CFLAGS = -Wall -Werror -Wextra -pthread #-fsanitize=address,undefined #-fsanitize=thread 
 LDFLAGS =
 INCLUDES =
 CC = cc
