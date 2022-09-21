@@ -6,7 +6,7 @@
 #    By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/02 22:40:40 by pgeeser           #+#    #+#              #
-#    Updated: 2022/09/21 13:58:52 by pgeeser          ###   ########.fr        #
+#    Updated: 2022/09/21 15:02:01 by pgeeser          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,7 @@ clean:
 	rm -rf $(BONUS_OBJS)
 
 fclean: clean
+	rm -rf $(OBJDIR)
 	rm -rf $(NAME)
 	rm -rf $(BONUS_NAME)
 
