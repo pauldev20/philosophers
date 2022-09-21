@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 17:03:12 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 14:00:11 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 15:13:34 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	nap(t_philo *philo)
 {
 	write_thread_msg("is sleeping", philo);
 	timesleep(philo->maindata->time_to_sleep);
+	write_thread_msg("is thinking", philo);
 }
 
 static void	philo_actions(t_philo *philo)
@@ -37,13 +38,14 @@ static void	philo_actions(t_philo *philo)
 	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
 	write_thread_msg("is eating", philo);
 	philo->death_time = timenow() + philo->maindata->time_to_die;
-	philo->nb_ate++;
 	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
 	timesleep(philo->maindata->time_to_eat);
+	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
+	philo->nb_ate++;
+	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
 	pthread_mutex_unlock(&(philo->maindata->forks[philo->left_fork]));
 	pthread_mutex_unlock(&(philo->maindata->forks[philo->right_fork]));
 	nap(philo);
-	write_thread_msg("is thinking", philo);
 }
 
 void	*philo_routine(void *data)
