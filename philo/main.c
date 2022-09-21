@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:52:16 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 14:20:15 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 14:59:44 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ int	start_threads(t_main *maindata)
 
 int	main(int argc, char **argv)
 {
-	int		i;
 	t_main	maindata;
 
 	if (argc < 5 || argc > 6)
