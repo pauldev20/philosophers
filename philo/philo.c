@@ -6,16 +6,30 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 17:03:12 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 15:13:34 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 16:17:48 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static void	eat(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
+	write_thread_msg("is eating", philo);
+	philo->death_time = timenow() + philo->maindata->time_to_die;
+	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
+	timesleep(philo->maindata->time_to_eat, philo);
+	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
+	philo->nb_ate++;
+	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
+	pthread_mutex_unlock(&(philo->maindata->forks[philo->left_fork]));
+	pthread_mutex_unlock(&(philo->maindata->forks[philo->right_fork]));
+}
+
 static void	nap(t_philo *philo)
 {
 	write_thread_msg("is sleeping", philo);
-	timesleep(philo->maindata->time_to_sleep);
+	timesleep(philo->maindata->time_to_sleep, philo);
 	write_thread_msg("is thinking", philo);
 }
 
@@ -27,7 +41,7 @@ static void	philo_actions(t_philo *philo)
 		pthread_mutex_lock(&(philo->maindata->forks[philo->right_fork]));
 	write_thread_msg("has taken a fork", philo);
 	if (philo->left_fork == philo->right_fork)
-		timesleep(philo->maindata->time_to_die * 2);
+		timesleep(philo->maindata->time_to_die * 2, philo);
 	if (philo->left_fork == philo->right_fork)
 		return ;
 	if (philo->id % 2 == 0)
@@ -35,16 +49,7 @@ static void	philo_actions(t_philo *philo)
 	else
 		pthread_mutex_lock(&(philo->maindata->forks[philo->left_fork]));
 	write_thread_msg("has taken a fork", philo);
-	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	write_thread_msg("is eating", philo);
-	philo->death_time = timenow() + philo->maindata->time_to_die;
-	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
-	timesleep(philo->maindata->time_to_eat);
-	pthread_mutex_lock(&philo->maindata->finishcheck_mutex);
-	philo->nb_ate++;
-	pthread_mutex_unlock(&philo->maindata->finishcheck_mutex);
-	pthread_mutex_unlock(&(philo->maindata->forks[philo->left_fork]));
-	pthread_mutex_unlock(&(philo->maindata->forks[philo->right_fork]));
+	eat(philo);
 	nap(philo);
 }
 

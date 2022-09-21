@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 14:57:25 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 14:15:08 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 16:17:38 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int		check_args(int argc, char **argv);
 // lib
 int		errorexit(char *str, t_main *maindata);
 void	cleanup(t_main *maindata);
-void	timesleep(long milliseconds);
+void	timesleep(long milliseconds, t_philo *philo);
 void	write_thread_msg(char *str, t_philo *philo);
 long	timenow(void);
 

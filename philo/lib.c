@@ -6,7 +6,7 @@
 /*   By: pgeeser <pgeeser@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:31:17 by pgeeser           #+#    #+#             */
-/*   Updated: 2022/09/21 14:21:01 by pgeeser          ###   ########.fr       */
+/*   Updated: 2022/09/21 16:17:18 by pgeeser          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,13 @@ long	timenow(void)
 	return (milliseconds);
 }
 
-void	timesleep(long milliseconds)
+void	timesleep(long milliseconds, t_philo *philo)
 {
 	long	start;
 
 	start = timenow();
-	while ((timenow() - start) < milliseconds)
+	while ((timenow() - start) < milliseconds
+		&& !check_death(philo->maindata, 0))
 		usleep(200);
 }
 
